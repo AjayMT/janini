@@ -38,6 +38,8 @@ $(function () {
         output.text(result.output)
       } else if (result.timedOut) {
         output.html(`<span class="text-danger">Timeout</span>`)
+	  } else if (!result.checkstyleSucceeded) {
+        output.html(`<span class="text-danger">Checkstyle error:\n${ result.checkstyleErrorMessage }</span>`)
       } else if (!result.compiled) {
         output.html(`<span class="text-danger">Compiler error:\n${ result.compilationErrorMessage }</span>`)
       } else if (!result.executed) {
