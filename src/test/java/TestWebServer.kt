@@ -85,6 +85,7 @@ public class Question {
 }
 """.trim()
         submission.add("sources", JsonArray().add(source))
+        submission.add("requireCheckstyle", false)
         val result = Json.parse(WebServer.run(submission.toString())).asObject()
         Assert.assertTrue(result.get("timedOut").asBoolean())
     }
@@ -110,6 +111,7 @@ public class Question {
                     testObject.add("as", "SimpleCompiler")
                     testObject.add("class", "Question")
                     testObject.add("timeoutLength", 1000)
+                    testObject.add("requireCheckstyle", false)
                     testObject.add("sources", JsonArray().add(source))
                     val result = Json.parse(WebServer.run(testObject.toString())).asObject()
                     isOK(result)

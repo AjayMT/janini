@@ -211,7 +211,9 @@ public class Question {
      */
     @Test
     fun testImports() {
-        val classes = SimpleCompiler().run("""
+        val classes = SimpleCompiler()
+        classes.requireCheckstyle = false;
+        classes.run("""
 import java.util.ArrayList;
 
 public class Question {
@@ -232,17 +234,17 @@ public class Question {
     @Test
     fun testMultipleClassesInSingleSource() {
         val classes = SimpleCompiler().run("""
-    public class Other {
-        public String toString() {
-            return "Working";
-        }
+public class Other {
+    public String toString() {
+        return "Working";
     }
-    public class Question {
-        public static void main(final String[] unused) {
-            Other other = new Other();
-            System.out.print(other.toString());
-        }
+}
+public class Question {
+    public static void main(final String[] unused) {
+        Other other = new Other();
+        System.out.print(other.toString());
     }
+}
     """)
         Assert.assertEquals(classes.output, "Working")
         Assert.assertTrue(classes.executed)
@@ -255,17 +257,17 @@ public class Question {
     @Test
     fun testMultipleClassesInSingleSourceInWrongOrder() {
         val classes = SimpleCompiler().run("""
-    public class Question {
-        public static void main(final String[] unused) {
-            Other other = new Other();
-            System.out.print(other.toString());
-        }
+public class Question {
+    public static void main(final String[] unused) {
+        Other other = new Other();
+        System.out.print(other.toString());
     }
-    public class Other {
-        public String toString() {
-            return "Working";
-        }
+}
+public class Other {
+    public String toString() {
+        return "Working";
     }
+}
     """)
 
         Assert.assertEquals(classes.output, "Working")
@@ -387,17 +389,17 @@ public class Question {
         val classes = SimpleCompiler("JDK")
         classes.run("""
 public class A implements Comparable<A> {
-  public int compareTo(A other) {
-    return 0;
-  }
+    public int compareTo(A other) {
+        return 0;
+    }
 }
 public class Question {
-  public static <T extends Comparable<T>> int test(T[] values) {
-    return 8;
-  }
-  public static void main(String[] unused) {
-    System.out.print(test(new A[] { }));
-  }
+    public static <T extends Comparable<T>> int test(T[] values) {
+        return 8;
+    }
+    public static void main(String[] unused) {
+        System.out.print(test(new A[] {}));
+    }
 }
 """)
         Assert.assertEquals(classes.output, "8")
