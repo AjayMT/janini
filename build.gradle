@@ -47,6 +47,7 @@ checkstyle {
 }
 test {
     useTestNG()
+    testLogging.showStandardStreams = true
 }
 jar {
     from {

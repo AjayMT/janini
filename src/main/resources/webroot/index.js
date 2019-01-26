@@ -24,7 +24,7 @@ $(function () {
     if (id === "runClass") {
       run = {
         as: "SimpleCompiler", class: "Example",
-        sources: [ source ]
+        sources: [ source ], runTests: true, testClassName: "SumTest",
       }
     } else {
       run = {
@@ -38,7 +38,7 @@ $(function () {
         output.text(result.output)
       } else if (result.timedOut) {
         output.html(`<span class="text-danger">Timeout</span>`)
-	  } else if (!result.checkstyleSucceeded) {
+      } else if (!result.checkstyleSucceeded) {
         output.html(`<span class="text-danger">Checkstyle error:\n${ result.checkstyleErrorMessage }</span>`)
       } else if (!result.compiled) {
         output.html(`<span class="text-danger">Compiler error:\n${ result.compilationErrorMessage }</span>`)
@@ -55,7 +55,7 @@ $(function () {
 
   $(window).keypress(function (event) {
     if (!(event.which === 13 && event.ctrlKey) &&
-      !(event.which === 10 && event.ctrlKey)) {
+        !(event.which === 10 && event.ctrlKey)) {
       return true
     }
     event.preventDefault()

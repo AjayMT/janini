@@ -16,6 +16,21 @@ import java.util.Map;
 public class SimpleCompiler extends Source {
 
     /**
+     * Whether to run tests.
+     */
+    public boolean runTests = false;
+
+    /**
+     * Default method name to run when running tests.
+     */
+    public String testMethodName = "test";
+
+    /**
+     * Default class name to load when running tests.
+     */
+    public String testClassName = "QuestionTest";
+
+    /**
      * Sources to compile.
      */
     public String[] sources;
@@ -85,7 +100,7 @@ public class SimpleCompiler extends Source {
      */
     private ClassLoader compileWithJanino() throws CompileException, IOException {
         org.codehaus.janino.SimpleCompiler simpleCompiler =
-                new org.codehaus.janino.SimpleCompiler();
+            new org.codehaus.janino.SimpleCompiler();
         simpleCompiler.setPermissions(permissions);
         for (String source : sources) {
             simpleCompiler.cook(new ByteArrayInputStream(source.getBytes(StandardCharsets.UTF_8)));
@@ -104,7 +119,7 @@ public class SimpleCompiler extends Source {
      */
     private ClassLoader compileWithJDK() throws CompileException, IOException {
         org.codehaus.commons.compiler.jdk.SimpleCompiler simpleCompiler =
-                new org.codehaus.commons.compiler.jdk.SimpleCompiler();
+            new org.codehaus.commons.compiler.jdk.SimpleCompiler();
         simpleCompiler.setPermissions(permissions);
         for (String source : sources) {
             simpleCompiler.cook(new ByteArrayInputStream(source.getBytes(StandardCharsets.UTF_8)));
@@ -126,22 +141,28 @@ public class SimpleCompiler extends Source {
     public void doCompile() throws CompileException, IOException, ClassNotFoundException, NoSuchMethodException {
         ClassLoader classLoader;
         switch (compiler) {
-            case "Janino":
+        case "Janino":
+            classLoader = compileWithJanino();
+            break;
+        case "JDK":
+            classLoader = compileWithJDK();
+            break;
+        default:
+            try {
                 classLoader = compileWithJanino();
                 break;
-            case "JDK":
-                classLoader = compileWithJDK();
-                break;
-            default:
-                try {
-                    classLoader = compileWithJanino();
-                    break;
-                } catch (CompileException ignored) { }
-                classLoader = compileWithJDK();
-                break;
+            } catch (CompileException ignored) { }
+            classLoader = compileWithJDK();
+            break;
         }
-        Class<?> klass = classLoader.loadClass(className);
-        method = klass.getMethod(methodName, String[].class);
+        String cName = className;
+        String mName = methodName;
+        if (runTests) {
+            cName = testClassName;
+            mName = testMethodName;
+        }
+        Class<?> klass = classLoader.loadClass(cName);
+        method = klass.getMethod(mName, String[].class);
         if (!(Modifier.isStatic(method.getModifiers()))) {
             throw new NoSuchMethodException(methodName + " must be static");
         }

@@ -209,16 +209,16 @@ public abstract class Source implements Callable<Void> {
         }
 
         defaultCheckstyleConfiguration = ConfigurationLoader.loadConfiguration(
-                checkstyleConfigurationPath,
-                new PropertiesExpander(System.getProperties()),
-                ConfigurationLoader.IgnoredModulesOptions.OMIT,
-                new ThreadModeSettings(1, 1)
-        );
+            checkstyleConfigurationPath,
+            new PropertiesExpander(System.getProperties()),
+            ConfigurationLoader.IgnoredModulesOptions.OMIT,
+            new ThreadModeSettings(1, 1)
+            );
 
         final ClassLoader moduleClassLoader = StringChecker.class.getClassLoader();
         checker = (StringChecker) new PackageObjectFactory(
-                StringChecker.class.getPackage().getName(), moduleClassLoader
-        ).createModule(defaultCheckstyleConfiguration.getName());
+            StringChecker.class.getPackage().getName(), moduleClassLoader
+            ).createModule(defaultCheckstyleConfiguration.getName());
         checker.setModuleClassLoader(moduleClassLoader);
     }
 
@@ -440,7 +440,7 @@ public abstract class Source implements Callable<Void> {
      */
     private static double diffTimestamps(final OffsetDateTime start, final OffsetDateTime end) {
         return (end.toInstant().toEpochMilli() - start.toInstant().toEpochMilli())
-                / MILLISECONDS_TO_SECONDS;
+            / MILLISECONDS_TO_SECONDS;
     }
 
     @Override

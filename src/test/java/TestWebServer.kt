@@ -51,6 +51,51 @@ public class Question {
     }
 
     /**
+    * Test passing test cases.
+    */
+    @Test
+    fun testPassingTests() {
+        val submission = JsonObject()
+        submission.add("as", "SimpleCompiler")
+        submission.add("runTests", true)
+        submission.add("testClassName", "SumTest")
+        val source = """
+public class Question {
+    public static int sum(int[] numbers) {
+        int sum = 0;
+        for (int n : numbers) {
+            sum += n;
+        }
+        return sum;
+    }
+}""".trim()
+        submission.add("sources", JsonArray().add(source))
+        val result = Json.parse(WebServer.run(submission.toString())).asObject()
+        Assert.assertEquals(result.get("output").asString().trim(), "All tests passed")
+    }
+
+    /**
+    * Test failing test cases.
+    */
+    @Test
+    fun testFailingTests() {
+        val submission = JsonObject()
+        submission.add("as", "SimpleCompiler")
+        submission.add("runTests", true)
+        submission.add("testClassName", "SumTest")
+        val source = """
+public class Question {
+    public static int sum(int[] numbers) {
+        int sum = 0;
+        return sum;
+    }
+}""".trim()
+        submission.add("sources", JsonArray().add(source))
+        val result = Json.parse(WebServer.run(submission.toString())).asObject()
+        Assert.assertEquals(result.get("executed").asBoolean(), false)
+    }
+
+    /**
      * Test crash class.
      */
     @Test
