@@ -70,7 +70,7 @@ public class Question {
     }
 }""".trim()
         submission.add("sources", JsonArray().add(source))
-        val result = Json.parse(WebServer.run(submission.toString())).asObject()
+        val result = Json.parse(WebServer.test(submission.toString())).asObject()
         Assert.assertEquals(result.get("output").asString().trim(), "All tests passed")
     }
 
@@ -91,7 +91,7 @@ public class Question {
     }
 }""".trim()
         submission.add("sources", JsonArray().add(source))
-        val result = Json.parse(WebServer.run(submission.toString())).asObject()
+        val result = Json.parse(WebServer.test(submission.toString())).asObject()
         Assert.assertEquals(result.get("executed").asBoolean(), false)
     }
 

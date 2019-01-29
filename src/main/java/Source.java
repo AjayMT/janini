@@ -323,9 +323,6 @@ public abstract class Source implements Callable<Void> {
      * @return this object for chaining
      */
     public final Source compile() {
-        if (runCheckstyle && requireCheckstyle && !checkstyleSucceeded) {
-            return this;
-        }
         try {
             compileStarted = OffsetDateTime.now();
             doCompile();

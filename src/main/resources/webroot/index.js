@@ -32,13 +32,13 @@ $(function () {
       }
     }
     console.log(run)
-    $.post("/run", JSON.stringify(run)).done(result => {
+    $.post("/test", JSON.stringify(run)).done(result => {
       console.log(result)
       if (result.executed) {
         output.text(result.output)
       } else if (result.timedOut) {
         output.html(`<span class="text-danger">Timeout</span>`)
-      } else if (!result.checkstyleSucceeded) {
+      } else if ((!result.checkstyleSucceeded) && result.runCheckstyle) {
         output.html(`<span class="text-danger">Checkstyle error:\n${ result.checkstyleErrorMessage }</span>`)
       } else if (!result.compiled) {
         output.html(`<span class="text-danger">Compiler error:\n${ result.compilationErrorMessage }</span>`)

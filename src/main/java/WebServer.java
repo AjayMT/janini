@@ -37,14 +37,13 @@ public class WebServer {
     }
 
     /**
-     * Run submitted code.
-     * <p>
-     * Exposed here for use by the testing suite.
+     * Construct a Source object from a JSON request.
      *
      * @param requestBody request content as a String
-     * @return response as a String
+     * @param withTests whether to add test suite code to the source
+     * @return the Source object
      */
-    public static String run(final String requestBody) {
+    private static Source getSource(final String requestBody, final boolean withTests) {
         JsonObject requestContent = Json.parse(requestBody).asObject();
         String runAs;
         if (requestContent.get("as") != null) {
@@ -52,7 +51,7 @@ public class WebServer {
         } else {
             runAs = "Snippet";
         }
-        if (requestContent.get("runTests") != null
+        if (withTests && requestContent.get("runTests") != null
             && requestContent.get("testClassName") != null) {
             boolean runTests = requestContent.get("runTests").asBoolean();
             String testClassName = requestContent.get("testClassName").asString();
@@ -85,10 +84,65 @@ public class WebServer {
         default:
             break;
         }
+
+        return source;
+    }
+
+    /**
+     * Run submitted code.
+     * <p>
+     * Exposed here for use by the testing suite.
+     *
+     * @param requestBody request content as a String
+     * @return response as a String
+     */
+    public static String run(final String requestBody) {
+        Source source = getSource(requestBody, false);
         if (source == null) {
             return requestBody;
         }
-        return source.run().completed();
+        if (source instanceof SimpleCompiler) {
+            ((SimpleCompiler) source).runTests = false;
+        }
+        source.runCheckstyle = false;
+        source.requireCheckstyle = false;
+        return source.compile().execute().completed();
+    }
+
+    /**
+     * Run tests on submitted code.
+     * <p>
+     * Exposed here for use by the testing suite.
+     *
+     * @param requestBody request content as a String
+     * @return response as a String
+     */
+    public static String test(final String requestBody) {
+        Source source = getSource(requestBody, true);
+        if (source == null) {
+            return requestBody;
+        }
+        source.runCheckstyle = false;
+        source.requireCheckstyle = false;
+        return source.compile().execute().completed();
+    }
+
+    /**
+     * Run checkstyle on submitted code.
+     * <p>
+     * Exposed here for use by the testing suite.
+     *
+     * @param requestBody request content as a String
+     * @return response as a String
+     */
+    public static String checkstyle(final String requestBody) {
+        Source source = getSource(requestBody, false);
+        if (source == null) {
+            return requestBody;
+        }
+        source.runCheckstyle = true;
+        source.requireCheckstyle = true;
+        return source.checkstyle().completed();
     }
 
     /**
@@ -148,6 +202,30 @@ public class WebServer {
                 try {
                     response.type("application/json; charset=utf-8");
                     return run(request.body());
+                } catch (Exception e) {
+                    if (settings.hasOption("v")) {
+                        System.err.println(e.toString());
+                    }
+                    return "";
+                }
+            });
+
+        post("/test", (request, response) -> {
+                try {
+                    response.type("application/json; charset=utf-8");
+                    return test(request.body());
+                } catch (Exception e) {
+                    if (settings.hasOption("v")) {
+                        System.err.println(e.toString());
+                    }
+                    return "";
+                }
+            });
+
+        post("/checkstyle", (request, response) -> {
+                try {
+                    response.type("application/json; charset=utf-8");
+                    return checkstyle(request.body());
                 } catch (Exception e) {
                     if (settings.hasOption("v")) {
                         System.err.println(e.toString());
