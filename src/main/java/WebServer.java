@@ -9,6 +9,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Arrays;
 
 import static spark.Spark.*;
 
@@ -124,7 +125,12 @@ public class WebServer {
         }
         source.runCheckstyle = false;
         source.requireCheckstyle = false;
-        return source.compile().execute().completed();
+        source = source.compile().execute();
+        SimpleCompiler executed = (SimpleCompiler) source;
+        // TODO find a better way to remove test code
+        // or find a better way to run tests
+        executed.sources = Arrays.copyOf(executed.sources, executed.sources.length - 1);
+        return source.completed();
     }
 
     /**
