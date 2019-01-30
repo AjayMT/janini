@@ -32,7 +32,7 @@ $(function () {
       }
     }
     console.log(run)
-    $.post("/test", JSON.stringify(run)).done(result => {
+    $.post("/checkstyle", JSON.stringify(run)).done(result => {
       console.log(result)
       if (result.executed) {
         output.text(result.output)

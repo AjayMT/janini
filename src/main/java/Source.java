@@ -294,7 +294,12 @@ public abstract class Source implements Callable<Void> {
             for (Map.Entry<String, String> source : sources().entrySet()) {
                 SortedSet<LocalizedMessage> sourceMessages = checker.processString(source.getValue(), source.getKey());
                 for (LocalizedMessage msg : sourceMessages) {
-                    checkstyleErrorMessage += msg.getMessage() + "\n";
+                    checkstyleErrorMessage += String.format(
+                        "line %d, column %d: %s\n",
+                        msg.getLineNo(),
+                        msg.getColumnNo(),
+                        msg.getMessage()
+                        );
                 }
                 messageCount += sourceMessages.size();
             }
@@ -377,8 +382,6 @@ public abstract class Source implements Callable<Void> {
         try {
             FutureTask<Void> futureTask = new FutureTask<>(this);
             Thread executionThread = new Thread(futureTask);
-
-
             ByteArrayOutputStream combinedOutputStream = new ByteArrayOutputStream();
             PrintStream combinedStream = new PrintStream(combinedOutputStream);
             PrintStream old = System.out;
