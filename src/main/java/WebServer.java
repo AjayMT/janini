@@ -105,8 +105,6 @@ public class WebServer {
         if (source instanceof SimpleCompiler) {
             ((SimpleCompiler) source).runTests = false;
         }
-        source.runCheckstyle = false;
-        source.requireCheckstyle = false;
         return source.compile().execute().completed();
     }
 
@@ -123,8 +121,6 @@ public class WebServer {
         if (source == null) {
             return requestBody;
         }
-        source.runCheckstyle = false;
-        source.requireCheckstyle = false;
         source = source.compile().execute();
         SimpleCompiler executed = (SimpleCompiler) source;
         // TODO find a better way to remove test code
