@@ -27,16 +27,6 @@ import java.util.concurrent.locks.ReentrantLock;
 @SuppressWarnings({"checkstyle:visibilitymodifier", "checkstyle:constantname"})
 public abstract class Source implements Callable<Void> {
     /**
-     * Whether to run checkstyle.
-     */
-    public boolean runCheckstyle = true;
-
-    /**
-     * Whether to require checkstyle pass before compiling.
-     */
-    public boolean requireCheckstyle = true;
-
-    /**
      * Compiler used.
      */
     protected String compiler = "";
@@ -284,9 +274,6 @@ public abstract class Source implements Callable<Void> {
      * @return this object for chaining
      */
     public final Source checkstyle() {
-        if (!runCheckstyle) {
-            return this;
-        }
         int messageCount = 0;
         try {
             checkstyleStarted = OffsetDateTime.now();

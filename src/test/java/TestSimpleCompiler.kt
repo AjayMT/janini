@@ -212,7 +212,6 @@ public class Question {
     @Test
     fun testImports() {
         val classes = SimpleCompiler()
-        classes.requireCheckstyle = false;
         classes.run("""
 import java.util.ArrayList;
 

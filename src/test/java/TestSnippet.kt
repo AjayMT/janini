@@ -23,7 +23,7 @@ System.out.print(a + b);
 """)
         Assert.assertEquals(snippet.output, "7")
         Assert.assertTrue(snippet.executed)
-        Assert.assertTrue(snippet.checkstyleSucceeded)
+        Assert.assertTrue(snippet.checkstyle().checkstyleSucceeded)
         Assert.assertFalse(snippet.timedOut)
     }
 

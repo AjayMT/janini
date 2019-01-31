@@ -142,8 +142,6 @@ public class WebServer {
         if (source == null) {
             return requestBody;
         }
-        source.runCheckstyle = true;
-        source.requireCheckstyle = true;
         return source.checkstyle().completed();
     }
 
